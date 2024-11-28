@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict User Behavior Anomaly</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        async function sendData() {
+            const jsonInput = document.getElementById("jsonInput").value;
+            const emailCount = document.getElementById("email_count").value;
+            const uniqueTo = document.getElementById("unique_to").value;
+            const uniqueCc = document.getElementById("unique_cc").value;
+            const uniqueBcc = document.getElementById("unique_bcc").value;
+            const uniqueFrom = document.getElementById("unique_from").value;
+            const avgSize = document.getElementById("avg_size").value;
+            const maxSize = document.getElementById("max_size").value;
+            const totalAttachments = document.getElementById("total_attachments").value;
+            const logonCount = document.getElementById("logon_count").value;
+            const deviceConnectCount = document.getElementById("device_connect_count").value;
+            const fileTransferCount = document.getElementById("file_transfer_count").value;
+            const avgContentLength = document.getElementById("avg_content_length").value;
+            const O = document.getElementById("O").value;
+            const C = document.getElementById("C").value;
+            const E = document.getElementById("E").value;
+            const A = document.getElementById("A").value;
+            const N = document.getElementById("N").value;
+            const firstLogonSeconds = document.getElementById("first_logon_seconds").value;
+            const lastLogonSeconds = document.getElementById("last_logon_seconds").value;
+
+            let inputData;
+
+            if (jsonInput) {
+                // If JSON input is provided, parse it directly
+                try {
+                    inputData = JSON.parse(jsonInput);
+                } catch (e) {
+                    alert("Invalid JSON format. Please check your input.");
+                    return;
+                }
+            } else {
+                // If manual input is provided, construct the object
+                inputData = [{
+                    "email_count": parseInt(emailCount),
+                    "unique_to": parseInt(uniqueTo),
+                    "unique_cc": parseInt(uniqueCc),
+                    "unique_bcc": parseInt(uniqueBcc),
+                    "unique_from": parseInt(uniqueFrom),
+                    "avg_size": parseFloat(avgSize),
+                    "max_size": parseInt(maxSize),
+                    "total_attachments": parseInt(totalAttachments),
+                    "logon_count": parseInt(logonCount),
+                    "device_connect_count": parseFloat(deviceConnectCount),
+                    "file_transfer_count": parseFloat(fileTransferCount),
+                    "avg_content_length": parseFloat(avgContentLength),
+                    "O": parseInt(O),
+                    "C": parseInt(C),
+                    "E": parseInt(E),
+                    "A": parseInt(A),
+                    "N": parseInt(N),
+                    "first_logon_seconds": parseFloat(firstLogonSeconds),
+                    "last_logon_seconds": parseFloat(lastLogonSeconds)
+                }];
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(inputData),
+                });
+
+                const result = await response.json();
+                const predictionResult = result.predictions ? result.predictions[0] : "Error in prediction";
+                
+                // Update the result text with color based on prediction
+                const resultElement = document.getElementById("result");
+                resultElement.innerText = predictionResult;
+                resultElement.style.display = "block"; // Show the result after submission
+
+                // Change text color based on prediction value
+                if (predictionResult === "Normal") {
+                    resultElement.style.color = "green"; // Normal is green
+                } else {
+                    resultElement.style.color = "red"; // Anomaly is red
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function toggleInputMethod(method) {
+            if (method === "json") {
+                document.getElementById("jsonInputSection").style.display = "block";
+                document.getElementById("formInputSection").style.display = "none";
+            } else {
+                document.getElementById("jsonInputSection").style.display = "none";
+                document.getElementById("formInputSection").style.display = "block";
+            }
+            // Hide result when switching input methods
+            document.getElementById("result").style.display = "none";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Predict User Behavior Anomaly</h1>
+
+        <div class="input-methods">
+            <button class="input-button active" onclick="toggleInputMethod('form')">Input via Form</button>
+            <button class="input-button" onclick="toggleInputMethod('json')">Input via JSON</button>
+        </div>
+        
+
+        <div id="formInputSection" class="input-section">
+            <h2>Insert Data via Form</h2>
+            <form>
+                <div class="form-group">
+                    <label>Email Count:</label>
+                    <input type="number" id="email_count" required>
+                </div>
+                <div class="form-group">
+                    <label>Unique To:</label>
+                    <input type="number" id="unique_to" required>
+                </div>
+                <div class="form-group">
+                    <label>Unique CC:</label>
+                    <input type="number" id="unique_cc" required>
+                </div>
+                <div class="form-group">
+                    <label>Unique BCC:</label>
+                    <input type="number" id="unique_bcc" required>
+                </div>
+                <div class="form-group">
+                    <label>Unique From:</label>
+                    <input type="number" id="unique_from" required>
+                </div>
+                <div class="form-group">
+                    <label>Avg Size:</label>
+                    <input type="number" step="any" id="avg_size" required>
+                </div>
+                <div class="form-group">
+                    <label>Max Size:</label>
+                    <input type="number" id="max_size" required>
+                </div>
+                <div class="form-group">
+                    <label>Total Attachments:</label>
+                    <input type="number" id="total_attachments" required>
+                </div>
+                <div class="form-group">
+                    <label>Logon Count:</label>
+                    <input type="number" id="logon_count" required>
+                </div>
+                <div class="form-group">
+                    <label>Device Connect Count:</label>
+                    <input type="number" step="any" id="device_connect_count" required>
+                </div>
+                <div class="form-group">
+                    <label>File Transfer Count:</label>
+                    <input type="number" step="any" id="file_transfer_count" required>
+                </div>
+                <div class="form-group">
+                    <label>Avg Content Length:</label>
+                    <input type="number" step="any" id="avg_content_length" required>
+                </div>
+                <div class="form-group">
+                    <label>O:</label>
+                    <input type="number" id="O" required>
+                </div>
+                <div class="form-group">
+                    <label>C:</label>
+                    <input type="number" id="C" required>
+                </div>
+                <div class="form-group">
+                    <label>E:</label>
+                    <input type="number" id="E" required>
+                </div>
+                <div class="form-group">
+                    <label>A:</label>
+                    <input type="number" id="A" required>
+                </div>
+                <div class="form-group">
+                    <label>N:</label>
+                    <input type="number" id="N" required>
+                </div>
+                <div class="form-group">
+                    <label>First Logon Seconds:</label>
+                    <input type="number" step="any" id="first_logon_seconds" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Logon Seconds:</label>
+                    <input type="number" step="any" id="last_logon_seconds" required>
+                </div>
+            </form>
+        </div>
+
+        <div id="jsonInputSection" class="input-section" style="display: none;">
+            <h2>Insert JSON Data</h2>
+            <p>Enter your JSON array data below:</p>
+            <textarea id="jsonInput" rows="10" placeholder='[{"email_count": 3683, "unique_to": 1558, ...}]'></textarea>
+        </div>
+
+        <button class="submit-button" onclick="sendData()">Submit Data</button>
+
+        <h2>Prediction Result</h2>
+        <div id="result" class="result-text" style="display: none;"></div>
+    </div>
+</body>
+</html>
