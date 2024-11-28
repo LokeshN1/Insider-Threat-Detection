@@ -15,7 +15,7 @@ CORS(app)
 model = joblib.load("isolation_forest_model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-@app.route('/predict', methods=['POST'])
+@app.route('/', methods=['POST'])
 def predict():
     try:
         # Parse JSON data
