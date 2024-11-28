@@ -1,4 +1,4 @@
-# Anomaly Detection Frontend
+# Predict User Behavior Anomaly Frontend
 
 This repository contains the frontend interface for the Anomaly Detection application, designed to provide users with an intuitive way to input data and receive anomaly predictions.
 
